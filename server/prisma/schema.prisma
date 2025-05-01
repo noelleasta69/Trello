@@ -15,3 +15,42 @@ datasource db {
 }
 
 
+model User {
+  id       String   @id @default(uuid())
+  email    String   @unique
+  password String
+  role     String   @default("user") 
+  boards   Board[] // ? 
+  task     Task[]
+  
+}
+
+model Board {
+  id      String  @id @default(uuid())
+  title   String
+  ownerId String
+  owner   User    @relation(fields: [ownerId], references: [id])
+  lists   List[]
+  createdAt DateTime @default(now())
+}
+
+
+model List {
+  id      String    @id @default(uuid())
+  title   String    
+  boardId String
+  board   Board     @relation(fields: [boardId], references: [id])
+  tasks   Task[]
+  order   Int
+}
+
+model Task {
+  id      String     @id @default(uuid())
+  title   String
+  listId  String
+  list    List       @relation(fields: [listId], references: [id])
+  userId  String      
+  user    User       @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
